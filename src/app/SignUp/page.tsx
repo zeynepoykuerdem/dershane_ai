@@ -1,8 +1,9 @@
-' use client '
+'use client'
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {supabase} from "@/lib/supabase";
+
 
 
 export default function SignUp (){
@@ -58,13 +59,15 @@ export default function SignUp (){
             onChange={e => setPassword(e.target.value)}
             className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-purple-400"
           />
-            <input
-            type="role"
-            placeholder="Role"
+          <select
             value={role}
             onChange={e => setRole(e.target.value)}
             className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-purple-400"
-          />
+          >
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
+          </select>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"

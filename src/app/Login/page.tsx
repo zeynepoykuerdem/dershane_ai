@@ -1,4 +1,4 @@
-' use client '
+'use client'
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {supabase} from "@/lib/supabase";
@@ -33,6 +33,8 @@ export default function Login (){
         else {
             router.push("/dashboard/student");
         }
+        console.log("profile", profile)
+    
     }
     return (
         <main className="min-h-screen flex items-center justify-center bg-gray-50">
