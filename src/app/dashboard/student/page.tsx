@@ -7,6 +7,7 @@ import AIAgent from "@/components/ui/aiAgent"
 import Navbar from "@/components/ui/navbar"
 
 
+
 export default function StudentDashboard (){
    const [showCalendar, setShowCalendar] = useState(false)
     return (
@@ -14,7 +15,7 @@ export default function StudentDashboard (){
           <Navbar onCalendarToggle={() => setShowCalendar(!showCalendar)} />
           <div className="grid grid-cols-4 gap-4 p-6 h-[calc(100vh-60px)]" >
         <Overview />
-        <PerformanceChart />
+        <PerformanceChart showCalendar={showCalendar} />
         <AIAgent />
   
 

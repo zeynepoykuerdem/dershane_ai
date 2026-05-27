@@ -14,7 +14,7 @@ export default function TeacherDashboard() {
               <Navbar onCalendarToggle={() => setShowCalendar(!showCalendar)} />
               <div className="grid grid-cols-4 gap-4 p-6 h-[calc(100vh-60px)]" >
             <Overview />
-            <PerformanceChart />
+            <PerformanceChart showCalendar={showCalendar} />
             <AIAgent />
       
     

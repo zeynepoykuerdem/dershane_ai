@@ -3,6 +3,7 @@ export default function Overview() {
  
     return (
         <div className="col-span-1 flex flex-col gap-4">
+
           <div className="bg-white rounded-xl border p-4">
             <h2 className="font-semibold text-gray-700 mb-3">Overview</h2>
             <div className="flex flex-col gap-3">
@@ -23,6 +24,8 @@ export default function Overview() {
           <div className="bg-white rounded-xl border p-4 mt-auto">
             <a href="#" className="text-sm text-gray-500 hover:text-purple-600">⚙️ Ayarlar</a>
           </div>
+
+          
         </div>
 
     )
