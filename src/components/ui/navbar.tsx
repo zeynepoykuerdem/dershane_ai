@@ -2,7 +2,6 @@
 import CalendarComponent from "@/app/dashboard/student/calendar/page"
 import {useState} from 'react'
 export default function Navbar({onCalendarToggle}:{onCalendarToggle: () => void}) {
-    const [showCalendar, setShowCalendar] = useState(false)
     return (
         <nav className="bg-white border-b px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">

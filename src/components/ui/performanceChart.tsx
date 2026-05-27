@@ -2,8 +2,8 @@
 import CalendarComponent from "@/app/dashboard/student/calendar/page"
 import {useState} from 'react'
 
-export default function PerformanceChart() {
-    const [showCalendar, setShowCalendar] = useState(false)
+export default function PerformanceChart({showCalendar}:{showCalendar: boolean}) {
+   
     return (
         <div className="col-span-2 bg-white rounded-xl border p-4 overflow-y-auto">
           {showCalendar? (
