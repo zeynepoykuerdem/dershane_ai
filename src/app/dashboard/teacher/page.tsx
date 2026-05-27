@@ -9,16 +9,19 @@ import Navbar from "@/components/ui/navbar"
 
 export default function TeacherDashboard() {
     const [showCalendar, setShowCalendar] = useState(false)
+    const [sidebarOpen, setSidebarOpen] = useState(false)
         return (
           <div className="min-h-screen bg-gray-50">
-              <Navbar onCalendarToggle={() => setShowCalendar(!showCalendar)} />
-              <div className="grid grid-cols-4 gap-4 p-6 h-[calc(100vh-60px)]" >
-            <Overview />
-            <PerformanceChart showCalendar={showCalendar} />
-            <AIAgent />
-      
-    
-          </div>
+            <Overview isOpen={sidebarOpen} onClose={ ()=> setSidebarOpen(false)
+            
+                    } />
+                    <div className="sm:ml-64">
+                      <Navbar onCalendarToggle={() => setShowCalendar(!showCalendar)} onMenuToggle={ ()=> setSidebarOpen(true) } />
+                      <div className="grid grid-cols-3 gap-4 p-6 h-[calc(100vh-60px)] overflow-auto">
+                        <PerformanceChart showCalendar={showCalendar} />
+                        <AIAgent />
+                      </div>
+                    </div>
           </div>
         
     
