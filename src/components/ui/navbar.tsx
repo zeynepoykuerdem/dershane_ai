@@ -1,7 +1,7 @@
 'use client'
 import CalendarComponent from "@/app/dashboard/student/calendar/page"
 import {useState} from 'react'
-export default function Navbar() {
+export default function Navbar({onCalendarToggle}:{onCalendarToggle: () => void}) {
     const [showCalendar, setShowCalendar] = useState(false)
     return (
         <nav className="bg-white border-b px-6 py-3 flex items-center justify-between">
@@ -18,7 +18,7 @@ export default function Navbar() {
             className="border rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-purple-400 w-40"
           />
           {/* Calendar */}
-          <button className="text-gray-500 hover:text-purple-600 text-sm border rounded-lg px-3 py-1.5" onClick={() => setShowCalendar(!showCalendar)}>
+          <button className="text-gray-500 hover:text-purple-600 text-sm border rounded-lg px-3 py-1.5" onClick={onCalendarToggle}>
             📅 Takvim
         
           </button>
