@@ -1,5 +1,4 @@
-' use client'
-
+'use client'
 import CalendarComponent from "@/app/dashboard/student/calendar/page"
 import {useState} from 'react'
 
