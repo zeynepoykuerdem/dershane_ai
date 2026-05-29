@@ -1,5 +1,5 @@
 'use client'
-import CalendarComponent from "@/app/dashboard/student/calendar/page"
+import CalendarComponent from "./ui/calendar_update"
 import {useState} from 'react'
 
 export default function PerformanceChart({showCalendar}:{showCalendar: boolean}) {

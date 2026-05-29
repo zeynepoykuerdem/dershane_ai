@@ -1,6 +1,7 @@
 'use client'
-
-export default function Overview({isOpen,onClose}:{isOpen: boolean, onClose: () => void}) {
+import Link from "next/link"
+export default function Overview({isOpen,onClose,role}:{isOpen: boolean, onClose: () => void, role: string}) {
+  const base= role === 'teacher' ? '/dashboard/teacher' : '/dashboard/student'
   return (
     <>
     {isOpen && (
@@ -33,20 +34,20 @@ export default function Overview({isOpen,onClose}:{isOpen: boolean, onClose: () 
             </a>
           </li>
           <li>
-            <a href="#" className="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-white-600 group">
+            <Link href={`${base}/homework`} className="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-white-600 group">
               <svg className="w-5 h-5 text-gray-500 group-hover:text-purple-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 5h6m-6 4h6M10 3v4h4V3h-4Z"/>
               </svg>
               <span className="ms-3">Ödevler</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-purple-600 group">
+            <Link href={`${base}/subjects`} className="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-purple-600 group">
               <svg className="w-5 h-5 text-gray-500 group-hover:text-purple-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.03v13m0-13c-2.819-.831-4.715-1.076-8.029-1.023A.99.99 0 0 0 3 6v11c0 .563.466 1.014 1.03 1.007 3.122-.043 5.018.212 7.97 1.023m0-13c2.819-.831 4.715-1.076 8.029-1.023A.99.99 0 0 1 21 6v11c0 .563-.466 1.014-1.03 1.007-3.122-.043-5.018.212-7.97 1.023"/>
               </svg>
               <span className="ms-3">Dersler</span>
-            </a>
+            </Link>
           </li>
           <li>
             <a href="#" className="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-purple-600 group">
