@@ -2,7 +2,6 @@
 
 import { useState,useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { HomeworkCard } from './homeworkCard'
 import {
   Table,
   TableBody,
@@ -22,7 +21,11 @@ export function HomeworkList(){
     useEffect(() => {
         const getUserId = async () => {
             const { data:{user}} = await supabase.auth.getUser()
-            if (user)fetchHomeworks(user.id)}
+            if (user){
+                console.log('User ID:', user.id)
+                fetchHomeworks(user.id)}
+            }
+        getUserId()
             
     },[])
 
@@ -34,7 +37,9 @@ export function HomeworkList(){
         if (error) {
             console.error('Error fetching homeworks:', error)
         } else {
+            console.log('Fetched homeworks:', data)
             setHomeworks(data)
+
         }
     }
     const handleComplete = async (id: number) => {
@@ -44,6 +49,8 @@ export function HomeworkList(){
         .eq('id', id)
         if (error) {
             console.error('Hata Olustu:', error)
+        } else {
+            console.log('Homework updated successfully')
         }
     }
     return (
@@ -55,7 +62,7 @@ export function HomeworkList(){
                         <TableHead>Açıklama</TableHead>
                         <TableHead>Teslim Tarihi</TableHead>
                         <TableHead>Ders</TableHead>
-                        <TableHead>Durum</TableHead> // tamamlandi tamamlanmadi
+                        <TableHead>Durum</TableHead>
                     </TableRow>
 
                 </TableHeader>
@@ -69,8 +76,7 @@ export function HomeworkList(){
                             <TableCell>
                                 <input 
                                 type="checkbox"
-                                checked={hw.is_completed}
-                                onChange={() => handleComplete(hw.id)}
+                                onChange={() => handleComplete(hw.id)} 
                                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                                 />
                                 

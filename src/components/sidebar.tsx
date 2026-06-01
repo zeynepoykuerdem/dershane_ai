@@ -25,13 +25,13 @@ export default function Overview({isOpen,onClose,role}:{isOpen: boolean, onClose
 
         <ul className="space-y-1 font-medium flex-1">
           <li>
-            <a href="#" className="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-white-600 group">
+            <Link href="#" className="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-white-600 group">
               <svg className="w-5 h-5 text-gray-500 group-hover:text-purple-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6.025A7.5 7.5 0 1 0 17.975 14H10V6.025Z"/>
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.5 3c-.169 0-.334.014-.5.025V11h7.975c.011-.166.025-.331.025-.5A7.5 7.5 0 0 0 13.5 3Z"/>
               </svg>
-              <span className="ms-3">Dashboard</span>
-            </a>
+              <span className="ms-3">Ana Sayfa</span>
+            </Link>
           </li>
           <li>
             <Link href={`${base}/homework`} className="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-white-600 group">
