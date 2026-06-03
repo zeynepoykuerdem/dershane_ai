@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { NavigationButton } from '@/components/ui/navigation_button'
 
 // ögrenci ödev listesi 
 
@@ -55,6 +56,9 @@ export function HomeworkList(){
     }
     return (
         <div className= "overflow-hidden rounded-md border">
+        <div className="fixed top-4 left-4 z-50">
+          <NavigationButton direction="prev" />
+      </div>
             <Table>
                 <TableHeader>
                     <TableRow>

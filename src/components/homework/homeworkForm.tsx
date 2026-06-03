@@ -9,6 +9,7 @@ import {Label} from "@/components/ui/label"
 import {Textarea} from "@/components/ui/textarea"
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
+import { NavigationButton } from '@/components/ui/navigation_button'
 
 
 interface FormData{
@@ -137,6 +138,9 @@ export function HomeworkForm() {
 
 return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+      <div className="fixed top-4 left-4 z-50">
+          <NavigationButton direction="prev" />
+      </div>
 
       {/* Form Card */}
       <Card className="border border-gray-200 shadow-sm">
