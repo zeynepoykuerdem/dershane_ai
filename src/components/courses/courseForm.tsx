@@ -9,6 +9,7 @@ import {Textarea} from "@/components/ui/textarea"
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import { NavigationButton } from '@/components/ui/navigation_button'
+import  Navbar  from '@/components/navbar'
 
 
 interface FormData{
@@ -96,8 +97,9 @@ export function CourseForm() {
             description:formData.description,
             student_id:formData.student_id,
             course_date: formData.course_date ?? '',
-            start_hour: formData.start_hour ?? '',
-            end_hour: formData.end_hour ?? '',
+            start_hour: formData.start_hour || null,
+            end_hour: formData.end_hour || null,
+            teacher_id : user?.id
         })
         setIsSubmitting(false)
         if (error) {
@@ -120,8 +122,9 @@ export function CourseForm() {
             description:formData.description ?? '',
             student_id:formData.student_id ?? '',
             course_date: formData.course_date ?? '',
-            start_hour: formData.start_hour ?? '',
-            end_hour: formData.end_hour ?? ''
+            start_hour: formData.start_hour || null,
+            end_hour: formData.end_hour || null,
+           
         })
         .eq('id',id)
         if (error) {
@@ -142,7 +145,6 @@ export function CourseForm() {
         .eq('id', id)
         if (!error) handleRead()
     }
-    const isOverdue = (dueDate: string) => new Date(dueDate) < new Date()
 
 return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
@@ -241,8 +243,7 @@ return (
                 rows={3}
               />
             </div>
-          </div>
-          {/** Ders Günü */}
+            {/** Ders Günü */}
           <div className="space-y-1.5 sm:col-span-2">
             <Label className="text-xs font-medium text-gray-600">Ders Günü</Label>
             <Input 
@@ -270,6 +271,8 @@ return (
               onChange={(e) => setFormData({ ...formData, end_hour: e.target.value })}
             />
           </div>
+          </div>
+          
 
           <div className="mt-5 flex justify-end">
             <Button
@@ -310,7 +313,11 @@ return (
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className="font-medium text-gray-900 text-sm">{course.title}</span>
-                    {course.subject}
+                    {course.subject && (
+                      <span className="text-xs font-medium bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
+                        ({course.subject})
+                      </span>
+                    )}
                   </div>
                   {course.description && (
                     <p className="text-xs text-gray-500 mt-1 line-clamp-2">{course.description}</p>

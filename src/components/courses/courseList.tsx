@@ -109,99 +109,103 @@ export function CourseList(){
       }
 
 
+    const weekLabel = `${weekDates[0].getDate()}/${weekDates[0].getMonth() + 1} – ${weekDates[6].getDate()}/${weekDates[6].getMonth() + 1}/${weekDates[6].getFullYear()}`
+
     return (
-    
-    <div className="overflow-x-auto rounded-xl border border-gray-200">
-      <div className="fixed top-4 left-4 z-50">
-          <NavigationButton direction="prev" />
+    <div className="space-y-3">
+      <div className="flex items-center">
+        <NavigationButton direction="prev" />
       </div>
-      <table  className="w-full min-w-[640px] border-collapse">
-        <thead>
-        
-          <tr>
-            {DAYS.map(day => (
-              <th
-                key={day}
-                className="px-3 py-3 text-xs font-medium text-gray-600 text-center border-b border-gray-200 bg-gray-50"
-              >
-                {day}
-                <div>
+
+      <div className="overflow-x-auto rounded-xl border border-gray-200">
+        <table className="w-full min-w-[640px] border-collapse">
+          <thead>
+            <tr>
+              {DAYS.map(day => (
+                <th
+                  key={day}
+                  className="px-3 py-3 text-xs font-medium text-gray-600 text-center border-b border-gray-200 bg-gray-50"
+                >
+                  {day}
+                  <div>
                     {weekDates[DAYS.indexOf(day)].getDate()}/{weekDates[DAYS.indexOf(day)].getMonth() + 1}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="align-top">
-            {DAYS.map(day => (
-              <td
-                key={day}
-                className="px-2 py-3 border-r border-gray-100 last:border-r-0 min-h-[120px]"
-                style={{ verticalAlign: 'top' }}
-              >
-                <div className="flex flex-col gap-2">
-                  {coursesByDay[day].length === 0 ? (
-                    <div className="h-16" />
-                  ) : (
-                    coursesByDay[day].map(course => {
-                      const color = getColor(course.subject, courses.map(c => c.subject))
-                      return (
-                        <div
-                          key={course.id}
-                          className="rounded-lg px-2.5 py-2"
-                          style={{
-                            background: color.bg,
-                            border: `0.5px solid ${color.border}`
-                          }}
-                        >
-                          <p
-                            className="text-xs font-medium leading-tight"
-                            style={{ color: color.text }}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="align-top">
+              {DAYS.map(day => (
+                <td
+                  key={day}
+                  className="px-2 py-3 border-r border-gray-100 last:border-r-0 min-h-[120px]"
+                  style={{ verticalAlign: 'top' }}
+                >
+                  <div className="flex flex-col gap-2">
+                    {coursesByDay[day].length === 0 ? (
+                      <div className="h-16" />
+                    ) : (
+                      coursesByDay[day].map(course => {
+                        const color = getColor(course.subject, courses.map(c => c.subject))
+                        return (
+                          <div
+                            key={course.id}
+                            className="rounded-lg px-2.5 py-2"
+                            style={{
+                              background: color.bg,
+                              border: `0.5px solid ${color.border}`
+                            }}
                           >
-                            {course.subject}
-                          </p>
-                          {course.title && (
                             <p
-                              className="text-[11px] mt-0.5 leading-tight line-clamp-2"
-                              style={{ color: color.text, opacity: 0.8 }}
+                              className="text-xs font-medium leading-tight"
+                              style={{ color: color.text }}
                             >
-                              {course.title}
+                              {course.subject}
                             </p>
-                          )}
-                          {course.start_hour && course.end_hour && (
-                            <p
-                              className="text-[10px] mt-1"
-                              style={{ color: color.text, opacity: 0.7 }}
-                            >
-                              {formatTime(course.start_hour)} – {formatTime(course.end_hour)}
-                            </p>
-                          )}
-                        </div>
-                      )
-                    })
-                  )}
-                </div>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-      <div className="flex items-center justify-between mb-4">
-        <button 
-        onClick={()=> handleChangePage('prev')}
-        className="text-sm text-gray-500 hover:text-purple-600 px-3 py-1.5 border rounded-lg"
+                            {course.title && (
+                              <p
+                                className="text-[11px] mt-0.5 leading-tight line-clamp-2"
+                                style={{ color: color.text, opacity: 0.8 }}
+                              >
+                                {course.title}
+                              </p>
+                            )}
+                            {course.start_hour && course.end_hour && (
+                              <p
+                                className="text-[10px] mt-1"
+                                style={{ color: color.text, opacity: 0.7 }}
+                              >
+                                {formatTime(course.start_hour)} – {formatTime(course.end_hour)}
+                              </p>
+                            )}
+                          </div>
+                        )
+                      })
+                    )}
+                  </div>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => handleChangePage('prev')}
+          className="text-sm text-gray-500 hover:text-purple-600 px-3 py-1.5 border rounded-lg"
         >
           Önceki Hafta
         </button>
-        <button 
-        onClick={()=> handleChangePage('next')}
-        className="text-sm text-gray-500 hover:text-purple-600 px-3 py-1.5 border rounded-lg"
+        <span className="text-xs text-gray-400">{weekLabel}</span>
+        <button
+          onClick={() => handleChangePage('next')}
+          className="text-sm text-gray-500 hover:text-purple-600 px-3 py-1.5 border rounded-lg"
         >
           Sonraki Hafta
         </button>
       </div>
-      
     </div>
     )
 }
