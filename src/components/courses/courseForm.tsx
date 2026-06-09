@@ -329,7 +329,7 @@ return (
                   )}
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
-                  <button
+                  <Button
                     onClick={() => {
                       setFormData({
                         title: course.title,
@@ -346,13 +346,13 @@ return (
                     className="text-xs text-gray-400 hover:text-blue-600 px-2.5 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
                   >
                     Düzenle
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleDelete(course.id)}
                     className="text-xs text-gray-400 hover:text-red-600 px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
                   >
                     Sil
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
@@ -362,3 +362,6 @@ return (
     </div>
   )
 }
+
+
+   

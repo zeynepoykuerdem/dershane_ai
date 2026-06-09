@@ -12,8 +12,6 @@ export default function Overview({isOpen,onClose,role}:{isOpen: boolean, onClose
       className={`fixed top-0 left-0 z-40 w-64 h-full transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} sm:translate-x-0`}
       aria-label="Sidebar"
     >
-
-      
       <div className="h-full px-3 py-4 overflow-y-auto bg-white border-r border-gray-200 flex flex-col">
 
         {/* Logo */}
