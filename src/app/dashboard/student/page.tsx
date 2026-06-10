@@ -1,15 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Overview from "@/components/sidebar";
 import PerformanceChart from "@/components/performanceChart";
 import AIAgent from "@/components/agent/aiAgent";
 import Navbar from "@/components/navbar";
+import { supabase } from "@/lib/supabase";
 
 export default function StudentDashboard() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [userId,setUserId]=useState<string|undefined>()
+
+  useEffect(()=>{
+    const getUser= async()=>{
+      const {data:{user}}= await supabase.auth.getUser()
+      setUserId(user?.id)
+    }
+    getUser()
+  }, []
+
+  )
+
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Overview
@@ -23,9 +38,13 @@ export default function StudentDashboard() {
           onMenuToggle={() => setSidebarOpen(true)}
           onProfileToggle={() => setProfileOpen(true)}
         />
-        <div className="grid grid-cols-3 gap-4 p-6 h-[calc(100vh-60px)] overflow-auto">
-          <PerformanceChart showCalendar={showCalendar} />
-          <AIAgent />
+        <div className="flex flex-col md:grid md:grid-cols-3 gap-4 p-4 sm:p-6 h-auto md:h-[calc(100vh-70px)] overflow-y-auto">
+          <div className="w-full md:col-span-2">
+            <PerformanceChart showCalendar={showCalendar} studentId={userId}  />
+          </div>
+          <div className="w-full md:col-span-1">
+            <AIAgent />
+          </div>
         </div>
       </div>
     </div>

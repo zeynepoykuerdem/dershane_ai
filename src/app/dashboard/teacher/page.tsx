@@ -2,9 +2,11 @@
 import { useState } from "react";
 
 import Overview from "@/components/sidebar";
-import PerformanceChart from "@/components/performanceChart";
+
 import AIAgent from "@/components/agent/aiAgent";
 import Navbar from "@/components/navbar";
+import CalendarComponent from "@/components/ui/calendar_update"
+
 
 export default function TeacherDashboard() {
   const [showCalendar, setShowCalendar] = useState(false);
@@ -23,9 +25,16 @@ export default function TeacherDashboard() {
           onMenuToggle={() => setSidebarOpen(true)}
           onProfileToggle={() => setProfileOpen(true)}
         />
-        <div className="grid grid-cols-3 gap-4 p-6 h-[calc(100vh-60px)] overflow-auto">
-          <PerformanceChart showCalendar={showCalendar} />
-          <AIAgent />
+        <div className="flex flex-col md:grid md:grid-cols-3 gap-4 p-4 sm:p-6 h-auto md:h-[calc(100vh-70px)] overflow-y-auto">
+      
+          <div className="w-full md:col-span-2">
+            <AIAgent />
+          </div>
+          <div className="w-full md:col-span-1">
+            <CalendarComponent/>
+
+          </div>
+    
         </div>
       </div>
     </div>

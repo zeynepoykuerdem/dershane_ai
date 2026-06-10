@@ -50,6 +50,7 @@ export function ExamForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState<"manuel" | "dosya">("manuel");
   const [editId, setEditId] = useState<string | null>(null);
@@ -85,6 +86,107 @@ export function ExamForm() {
     if (data) setExams(data);
     if (error) console.error("Hata olustu:", error);
   };
+  const handleFileUpload = async (file: File) => {
+    console.log("handleFileUpload started");
+    setLoading(true);
+    setIsSubmitting(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user?.id)
+      .single();
+
+    console.log("Profile error:", profileError);
+    console.log("Profile:", profile);
+
+    const filePath = `${user?.id}/${Date.now()}_${file.name}`;
+
+    const { error: uploadError } = await supabase.storage //bucket
+      .from("exam-files")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error("Dosya yükleme hatasi:", uploadError);
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("exam-files").getPublicUrl(filePath);
+
+    console.log("Full name:", profile?.full_name);
+
+    await parseFileWithClaude(file, publicUrl, user?.id, profile?.full_name);
+    setLoading(false);
+    setIsSubmitting(false);
+  };
+
+  const parseFileWithClaude = async (
+    file: File,
+    fileUrl: string,
+    studentId: string | undefined,
+    student_name: string | undefined,
+  ) => {
+    return new Promise<void>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onerror = reject;
+      reader.onload = async () => {
+        console.log("parseFile koduna geldim mi?");
+        try {
+          const base64 = (reader.result as string).split(",")[1];
+          const fileType = file.type;
+
+          const res = await fetch("/api/parse-exam", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              base64,
+              fileType,
+              fileUrl,
+              studentId,
+              student_name,
+            }),
+          });
+          const data = await res.json();
+          console.log("ParsedData:", data.exams);
+          if (data.exams) {
+            const examsArray = Array.isArray(data.exams)
+              ? data.exams
+              : [data.exams];
+
+            const {
+              data: { user },
+            } = await supabase.auth.getUser();
+            for (const exam of examsArray) {
+              const { error } = await supabase.from("exams").insert({
+                ...exam,
+                kazanim_kodlari: exam.kazanim_kodlari ?? [],
+                file_url: fileUrl,
+                student_id: user?.id,
+              });
+              if (error) {
+                console.error("Hata:", error);
+              }
+            }
+
+            setIsSubmitted(true);
+            setTimeout(() => setIsSubmitted(false), 3000);
+            handleRead();
+          }
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      };
+    });
+  };
+
   const handleInsert = async () => {
     setIsSubmitting(true);
     const {
@@ -142,6 +244,9 @@ export function ExamForm() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 overflow-hidden">
+      <div className="fixed top-4 left-4 z-50">
+          <NavigationButton direction="prev" />
+      </div>
       {/** Tab Secimi -> manuel | dosya */}
       {/** dosya */}
 
@@ -156,10 +261,20 @@ export function ExamForm() {
         >
           Manuel Giriş
         </button>
+        <button
+          onClick={() => setActiveTab("dosya")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === "dosya"
+              ? "border-purple-600 text-purple-600"
+              : "border-transparent text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          Dosya Yükle
+        </button>
       </div>
 
       {/** Manuel Giris */}
-      {activeTab === "manuel" && (
+      {activeTab === "manuel" && ( //-> 'okul'
         <Card>
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center justify-between mb-6">
@@ -295,6 +410,82 @@ export function ExamForm() {
                     : " Sınavı Kaydet"}
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      )}
+      {activeTab === "dosya" && ( //-> 'deneme'
+        <Card>
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900">
+                  {" Yeni Sinav Ekle"}
+                </h1>
+              </div>
+            </div>
+            {isSubmitted && (
+              <div className="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700">
+                ✓ İşlem başarılı
+              </div>
+            )}
+            <div className="grid gap-4 sm:grid-cols-2">
+              {/** Sinavda Alinabilinecek En yüksek Puan  */}
+              {/** Sinav Tarihi */}
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs font-medium text-gray-600">
+                  Sinav Günü
+                </Label>
+                <Input
+                  type="date"
+                  value={examData.exam_date}
+                  onChange={(e) =>
+                    setExamData({ ...examData, exam_date: e.target.value })
+                  }
+                />
+              </div>
+              {/** Sinav Kaynak */}
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs font-medium text-gray-600">
+                  Sinav Kaynak
+                </Label>
+                <Select
+                  value={examData.grades_source}
+                  onValueChange={(value) =>
+                    setExamData((prev) => ({ ...prev, grades_source: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Kaynak Secin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SOURCES.map((s: string) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label className="text-xs font-medium text-gray-600">
+                {" "}
+                Dosya Seç
+              </Label>
+              <Input
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file);
+                }}
+              />
+            </div>
+            {loading && (
+              <p className="text-sm text-purple-600 mt-2">
+                Dosya analiz ediliyor...
+              </p>
+            )}
           </CardContent>
         </Card>
       )}

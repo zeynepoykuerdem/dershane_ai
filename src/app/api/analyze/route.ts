@@ -2,23 +2,23 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse, NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || "",
 });
 
 export async function POST(request: NextRequest) {
   const { question, student_id } = await request.json();
-  console.log('student_id:',student_id)
-
-  
+  console.log("student_id:", student_id);
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || "",
     process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   );
 
-  console.log('service key:', process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 20))
+  console.log(
+    "service key:",
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 20),
+  );
 
   const { data: exams, error: examsError } = await supabase
     .from("exams")
@@ -26,12 +26,11 @@ export async function POST(request: NextRequest) {
     .eq("student_id", student_id)
     .order("created_at", { ascending: false });
 
-  console.log('exams error;',examsError)
-  
+  console.log("exams error;", examsError);
 
   const studentName = exams?.[0]?.profiles?.full_name ?? "Ögrenci";
 
-  console.log('exams data:', exams)
+  console.log("exams data:", exams);
 
   const examsSummary = exams
     ?.map(
@@ -54,10 +53,23 @@ export async function POST(request: NextRequest) {
     Değerlendirmen gereken kriterler:
     1. Öğrencinin geçmiş sınav performansına dayanarak, sorunun hangi konuya ait olduğunu belirle.
     2. Sorunun hangi sınav türüne ait olduğunu belirle (örneğin, matematik, fen, sosyal bilgiler vb.).
+    3. Denemedeki kazanim sonuclarina göre hangi konularda eksik oldugunu detayli bildir.
     3. Sorunun öğrencinin geçmiş performansına göre hangi konularda daha fazla yardıma ihtiyaç duyduğunu belirle.
     4. Sorunun öğrencinin geçmiş performansına göre hangi konularda daha az yardıma ihtiyaç duyduğunu belirle.
     5. Bu verilere dayanarak, öğrenciye en iyi şekilde yardımcı olmak için hangi kaynaklar ve çalışma stratejileri önerirsin?
     Cevabını açık ve anlaşılır bir şekilde ver.
+
+    Vermen gereken cevap formati söyle olsun : 
+    ##📊 Performans Özeti
+    Her ders için kısa özet (1-2 cümle)
+    ## ⚠️ Zayıf Konular
+    - Ders adı: konu adı (puan/max_puan)
+
+    ## ✅ Güçlü Yönler  
+    - Ders adı: neden iyi
+
+    ## 📚 Çalışma Önerileri
+    Her zayıf konu için 2-3 spesifik öneri
     
     `;
   const message = await anthropic.messages.create({
