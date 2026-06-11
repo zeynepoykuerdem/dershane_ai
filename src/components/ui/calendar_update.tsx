@@ -9,11 +9,19 @@ interface CalendarEvent {
   date: string;
   title:string |null;
   subject: string;
-  topic: string;
+  topic: string |null;
   startTime: string | null;
   endTime: string | null;
-  type: "exam" | "course";
+  type: "exam" | "course" |"hw";
 }
+/**
+ * 
+ *  title:string,
+    subject:string,
+    dueDate:string,
+    description:string,
+    student_id:string
+ */
 
 export default function CalendarComponent() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -23,6 +31,7 @@ export default function CalendarComponent() {
 
   const [courses, setCourses] = useState<CalendarEvent[]>([]);
   const [exams, setExams] = useState<CalendarEvent[]>([]);
+  const [homeworks, setHomeworks] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
     console.log('exams:',exams)
@@ -30,7 +39,33 @@ export default function CalendarComponent() {
     console.log('selectedDateStr:',selectedDateStr)
     handleExamRead();
     handleCourseRead();
+    handleHomeworkRead();
   }, []);
+
+  const handleHomeworkRead = async () =>{
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const { data, error } = await supabase
+      .from("homework")
+      .select("*")
+      .eq("student_id", user?.id)
+      .order("created_at", { ascending: false });
+    if (data) {
+      const homeworkEvents = data.map((hw: any) => ({
+        date: hw.due_date,
+        title: hw.title,
+        subject: hw.subject,
+        topic: null,
+        startTime: null,
+        endTime: null,
+        type: "hw" as const,
+      }));
+      setHomeworks(homeworkEvents);
+    }
+    if (error) console.error("Hata olustu:", error);
+
+  }
 
   const handleExamRead = async () => {
     const {
@@ -89,7 +124,7 @@ export default function CalendarComponent() {
         startTime: null,
         endTime: null,
         type: e.type,
-        title: e.title
+        title: e.title,
       })),
     ...courses
       .filter((c) => c.date === selectedDateStr)
@@ -100,7 +135,18 @@ export default function CalendarComponent() {
         startTime: null,
         endTime: null,
         type: c.type,
-        title: c.title
+        title: c.title,
+      })),
+    ...homeworks
+      .filter((h) => h.date === selectedDateStr)
+      .map((h) => ({
+        date: h.date,
+        subject: h.subject,
+        topic: h.topic,
+        startTime: null,
+        endTime: null,
+        type: h.type,
+        title: h.title,
       })),
   ];
 
@@ -133,16 +179,22 @@ export default function CalendarComponent() {
               <div className="flex items-center gap-2 mb-1">
                 <span
                   className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                    event.type === 'exam'
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-purple-100 text-purple-700'
+                    event.type === "exam"
+                      ? "bg-red-100 text-red-700"
+                      : event.type === "course"
+                      ? "bg-purple-100 text-purple-700"
+                      : "bg-green-100 text-green-700"
                   }`}
                 >
-                  {event.type === 'exam' ? 'Sınav' : 'Ders'}
+                  {event.type === "exam"
+                    ? "Sınav"
+                    : event.type === "course"
+                    ? "Ders"
+                    : "Ödev"}
                 </span>
                 <div className="ml-2">
                   <p className="text-sm font-semibold text-gray-800">
-                    {event.type==='exam'? event.subject : event.title}
+                    {event.type === 'exam' ? event.subject : event.title}
                   </p>
                   <p className="text-xs text-gray-500">{event.topic}</p>
                   {event.startTime && event.endTime && (
