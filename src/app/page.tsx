@@ -7,7 +7,10 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4">
         <div className="container mx-auto flex justify-between items-center">
-          <a href="/" className="text-purple-700 text-lg font-bold tracking-tight">
+          <a
+            href="/"
+            className="text-purple-700 text-lg font-bold tracking-tight"
+          >
             Studiee AI
           </a>
           <div className="flex items-center gap-1">
@@ -127,8 +130,9 @@ export default function Home() {
             <p className="text-purple-100 text-base md:text-lg mb-8">
               Ücretsiz başlayın, istediğiniz zaman yükseltin.
             </p>
-            <Link href='/signup'>
-              <Button className="bg-white text-purple-700 hover:bg-purple-50 px-8 py-3 text-sm font-semibold rounded-xl shadow-md transition-all">
+            <Link href="/signup">
+              <Button className="bg-white  text-purple-700 hover:bg-purple-50 px-8 py-3 text-sm font-semibold rounded-xl shadow-md transition-all">
+                Hemen Basla
               </Button>
             </Link>
           </div>
