@@ -10,12 +10,15 @@ export default function Overview({
   role: string;
 }) {
   //=== "teacher" ? "/dashboard/teacher" : "/dashboard/student";
-  const base =
-    role === " teacher"
-      ? "/dashboard/teacher"
-      : role === "admin"
-        ? "/dashboard/admin"
-        : "/dashboard/student";
+  const base =role 
+  if(base ==='teacher'){
+    "/dashboard/teacher"
+
+  }
+  else if (base==='student'){
+    "/dashboard/student"
+  }
+  else "/dashboard/admin"
   return (
     <>
       {isOpen && (

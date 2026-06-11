@@ -300,7 +300,7 @@ return (
         </div>
 
         {courses.length === 0 ? (
-          <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl">
+          <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl ">
             <p className="text-sm text-gray-400">Henüz ders eklenmedi</p>
           </div>
         ) : (
