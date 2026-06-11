@@ -38,39 +38,23 @@ export default function Login() {
   }
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div>
-        <h1 className="text-2xl font-bold mb-4">Login</h1>
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <Label
-              htmlFor="email"
-              className="block text-gray-700 font-bold mb-2"
-            >
-              Email
-            </Label>
-            <Input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-          </div>
-          <div className="mb-4">
-            <Label
-              htmlFor="password"
-              className="block text-gray-700 font-bold mb-2"
-            >
-              Password
-            </Label>
-            <Input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-          </div>
+      <div className="bg-white p-8 rounded-xl shadow w-full max-w-sm">
+        <h1 className="ttext-2xl font-bold mb-6 text-center">Login</h1>
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+           <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-purple-400"
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-purple-400"
+          />
           {error && (
             <div
               className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
@@ -81,7 +65,7 @@ export default function Login() {
           )}
           <Button
             type="submit"
-            className="bg-gray-400 text-purple-200 hover:bg-purple-500 px-8 py-3 text-sm font-semibold rounded-xl shadow-md transition-all"
+            className="bg-purple-600 text-white rounded-lg py-2 font-medium hover:bg-purple-700"
           >
             Login
           </Button>

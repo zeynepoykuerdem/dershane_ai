@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {supabase} from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 
 
@@ -38,21 +41,21 @@ export default function SignUp (){
       <div className="bg-white p-8 rounded-xl shadow w-full max-w-sm">
         <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
         <form onSubmit={handleSignUp} className="flex flex-col gap-4">
-          <input
+          <Input
             type="text"
             placeholder="Full Name"
             value={fullName}
             onChange={e => setFullName(e.target.value)}
             className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-purple-400"
           />
-          <input
+          <Input
             type="email"
             placeholder="Email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-purple-400"
           />
-          <input
+          <Input
             type="password"
             placeholder="Password"
             value={password}
@@ -69,12 +72,12 @@ export default function SignUp (){
             <option value="admin">Admin</option>
           </select>
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button
+          <Button
             type="submit"
             className="bg-purple-600 text-white rounded-lg py-2 font-medium hover:bg-purple-700"
           >
             Sign Up
-          </button>
+          </Button>
         </form>
         <p className="text-center text-sm mt-4 text-gray-500">
           Already have an account?{' '}
