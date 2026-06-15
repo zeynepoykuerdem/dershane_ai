@@ -9,7 +9,9 @@ const anthropic = new Anthropic({
 
 export async function POST(request: NextRequest) {
   // 1)request.json()'dan değerleri al:
-  const { base64, fileType, student_id, studentName } = await request.json();
+  const { base64, fileType, student_id, student_name } = await request.json();
+  console.log("Requested body studentName:", student_name);
+  console.log("Requested body student_id:", student_id);
 
   // 2)Dosya Tipine göre content block olustur
   /**
@@ -88,25 +90,22 @@ content -> files+prompt
             data: base64,
           },
         };
-  let message; 
+  let message;
   try {
     message = await anthropic.messages.create({
-    model: "claude-haiku-4-5",
-    max_tokens: 4096,
-    messages: [
-      {
-        role: "user",
-        content: [fileBlock, { type: "text", text: prompt }],
-      },
-    ],
-  });
-
-
-  }catch (error){
-    console.error('Anthropic error',error)
-    return NextResponse.json({error:'Claude Hatasi'},{status:500})
-  }    
-   
+      model: "claude-haiku-4-5",
+      max_tokens: 4096,
+      messages: [
+        {
+          role: "user",
+          content: [fileBlock, { type: "text", text: prompt }],
+        },
+      ],
+    });
+  } catch (error) {
+    console.error("Anthropic error", error);
+    return NextResponse.json({ error: "Claude Hatasi" }, { status: 500 });
+  }
 
   // as const -> stringten literal tipe ceviriyor
   // 5) Cevabi pars et -> json a cevir
@@ -118,7 +117,7 @@ return NextResponse.json({ exams: parsedData })
     message.content[0].type === "text" ? message.content[0].text : null;
 
   if (!response) {
-    console.log('Burdan mi geliyor hata?')
+    console.log("Burdan mi geliyor hata?");
     return NextResponse.json({ error: "Parse edilemedi" }, { status: 500 });
   }
   try {
@@ -126,30 +125,31 @@ return NextResponse.json({ exams: parsedData })
     const parsedData = JSON.parse(clean);
     const exams = parsedData.exams;
 
-    console.log('Burda kaldim.')
+    console.log("Burda kaldim.");
 
     if (exams) {
       const parsedName = parsedData.student_name;
       console.log("Parsed Name:", parsedName);
-      console.log("Sistemdeki isim:", studentName);
-      if (parsedName && studentName) {
-        console.log('Burda kaldim.1')
+      console.log("Sistemdeki isim:", student_name);
+      if (parsedName && student_name) {
         const match =
-          parsedName.toLowerCase().includes(studentName.toLowerCase()) ||
-          studentName.toLowerCase().includes(parsedName.toLowerCase());
+          parsedName.toLowerCase().includes(student_name.toLowerCase()) ||
+          student_name.toLowerCase().includes(parsedName.toLowerCase());
         if (!match) {
-          console.log('Burda kaldim.2')
-          return NextResponse.json({
-            error: " Isim eslesmiyor",
-            message: `Belgede ${parsedName} ismi var, sisteme ${studentName} olarak kayitlisiniz.`,
-          });
+          return NextResponse.json(
+            {
+              error: " Isim eslesmiyor",
+              message: `Belgede ${parsedName} ismi var, sisteme ${student_name} olarak kayitlisiniz.`,
+            },
+            { status: 500 },
+          );
         }
       }
     }
 
     return NextResponse.json({ exams });
-  } catch (error){
-    console.error('Burdan mi geldi:',error)
+  } catch (error) {
+    console.error("Burdan mi geldi:", error);
     return NextResponse.json(
       { error: "JSON parse hatasi", raw: response },
       { status: 500 },

@@ -6,23 +6,15 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { NavigationButton } from "@/components/ui/navigation_button";
 
 interface ExamData {
@@ -51,6 +43,7 @@ export function ExamForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<"manuel" | "dosya">("manuel");
   const [editId, setEditId] = useState<string | null>(null);
@@ -86,6 +79,7 @@ export function ExamForm() {
     if (data) setExams(data);
     if (error) console.error("Hata olustu:", error);
   };
+
   const handleFileUpload = async (file: File) => {
     console.log("handleFileUpload started");
     setLoading(true);
@@ -115,11 +109,10 @@ export function ExamForm() {
       setIsSubmitting(false);
       return;
     }
+
     const {
       data: { publicUrl },
     } = supabase.storage.from("exam-files").getPublicUrl(filePath);
-
-    console.log("Full name:", profile?.full_name);
 
     await parseFileWithClaude(file, publicUrl, user?.id, profile?.full_name);
     setLoading(false);
@@ -132,6 +125,10 @@ export function ExamForm() {
     studentId: string | undefined,
     student_name: string | undefined,
   ) => {
+    if (!studentId || !student_name) {
+      console.error("Eksik Parametre:", { studentId, student_name });
+      throw new Error("Kullanici bilgileri yüklenemedi");
+    }
     return new Promise<void>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -148,12 +145,20 @@ export function ExamForm() {
             body: JSON.stringify({
               base64,
               fileType,
-              fileUrl,
               studentId,
               student_name,
             }),
           });
+
           const data = await res.json();
+
+          if (!res.ok || data.error) {
+            if (data.error === "isim_eslesmiyor") {
+              alert(data.message);
+            }
+
+            setErrorMessage(data.message);
+          }
           console.log("ParsedData:", data.exams);
           if (data.exams) {
             const examsArray = Array.isArray(data.exams)
@@ -245,7 +250,7 @@ export function ExamForm() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 overflow-hidden">
       <div className="fixed top-4 left-4 z-50">
-          <NavigationButton direction="prev" />
+        <NavigationButton direction="prev" />
       </div>
       {/** Tab Secimi -> manuel | dosya */}
       {/** dosya */}
@@ -477,7 +482,10 @@ export function ExamForm() {
                 accept=".pdf,.png,.jpg,.jpeg"
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
-                  if (file) handleFileUpload(file);
+                  if (file) {
+                    setErrorMessage(null);
+                    handleFileUpload(file);
+                  }
                 }}
               />
             </div>
@@ -485,6 +493,11 @@ export function ExamForm() {
               <p className="text-sm text-purple-600 mt-2">
                 Dosya analiz ediliyor...
               </p>
+            )}
+            {errorMessage && (
+              <div className="rounded-xl bg-red 50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                {errorMessage}
+              </div>
             )}
           </CardContent>
         </Card>
