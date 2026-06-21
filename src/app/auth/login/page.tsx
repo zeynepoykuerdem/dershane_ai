@@ -69,6 +69,13 @@ export default function Login() {
           >
             Login
           </Button>
+          <a
+          href="/auth/forgot-password"
+          className="text-sm text-purple-600 hover:underline text-center"
+          >
+            Şifremi unuttum
+
+          </a>
         </form>
       </div>
     </main>
