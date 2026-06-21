@@ -17,7 +17,7 @@ export default function ForgotPassword() {
   async function handleForgotPassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://studieeai.vercel.app/auth/reset-password",
+      redirectTo: `${window.location.origin}/auth/reset-password`,
     });
     if (error) {
       setError(error.message);
