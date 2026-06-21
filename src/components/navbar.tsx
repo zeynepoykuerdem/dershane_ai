@@ -3,7 +3,8 @@ import CalendarComponent from "./ui/calendar_update";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import useRealtimeNotifications from "@/hooks/use-realtime-notifications";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
+import AccountPage from "@/app/account/page";
 
 import {
   DropdownMenu,
@@ -38,7 +39,7 @@ export default function Navbar({
         <Button
           className="md:hidden text-gray-500 hover:text-purple-600 p-1"
           onClick={onMenuToggle}
-          variant='secondary'
+          variant="secondary"
         >
           <svg
             className="w-6 h-6"
@@ -70,7 +71,7 @@ export default function Navbar({
         <Button
           className="text-gray-500 hover:text-purple-600 text-sm border rounded-lg p-2 sm:px-3 sm:py-1.5"
           onClick={onCalendarToggle}
-          variant='secondary'
+          variant="secondary"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +89,7 @@ export default function Navbar({
           <Button
             className="text-gray-500 hover:text-purple-600 text-sm border rounded-lg p-2 sm:px-3 sm:py-1.5"
             onClick={() => setShowNotif(!showNotif)}
-            variant='secondary'
+            variant="secondary"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +155,10 @@ export default function Navbar({
         {/* Profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="w-8 h-8 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center text-white text-sm font-bold" variant='secondary'>
+            <Button
+              className="w-8 h-8 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center text-white text-sm font-bold"
+              variant="secondary"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -167,15 +171,21 @@ export default function Navbar({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-48" align="end">
-            <DropdownMenuItem>Hesabım</DropdownMenuItem>
-            <DropdownMenuItem>Ayarlar</DropdownMenuItem>
-            <DropdownMenuItem className="text-red-600 cursor-pointer"
-            onClick={async()=>{
-              await supabase.auth.signOut()
-              window.location.href='/login'
-            }}
+            <DropdownMenuItem
+              onClick={() => {
+                window.location.href = "/account";
+              }}
             >
-              
+              Hesabım
+            </DropdownMenuItem>
+            <DropdownMenuItem>Ayarlar</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-red-600 cursor-pointer"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.href = "/auth/login";
+              }}
+            >
               Çıkış Yap
             </DropdownMenuItem>
           </DropdownMenuContent>

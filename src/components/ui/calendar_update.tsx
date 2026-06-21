@@ -3,16 +3,16 @@
 import { useState, useEffect } from "react";
 
 import { Calendar } from "@/components/ui/calendar";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 
 interface CalendarEvent {
   date: string;
-  title:string |null;
+  title: string | null;
   subject: string;
-  topic: string |null;
+  topic: string | null;
   startTime: string | null;
   endTime: string | null;
-  type: "exam" | "course" |"hw";
+  type: "exam" | "course" | "hw";
 }
 /**
  * 
@@ -26,23 +26,23 @@ interface CalendarEvent {
 export default function CalendarComponent() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const selectedDateStr = date
-  ? `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
-  : ''
+    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+    : "";
 
   const [courses, setCourses] = useState<CalendarEvent[]>([]);
   const [exams, setExams] = useState<CalendarEvent[]>([]);
   const [homeworks, setHomeworks] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
-    console.log('exams:',exams)
-    console.log('courses:',courses)
-    console.log('selectedDateStr:',selectedDateStr)
+    console.log("exams:", exams);
+    console.log("courses:", courses);
+    console.log("selectedDateStr:", selectedDateStr);
     handleExamRead();
     handleCourseRead();
     handleHomeworkRead();
   }, []);
 
-  const handleHomeworkRead = async () =>{
+  const handleHomeworkRead = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -64,8 +64,7 @@ export default function CalendarComponent() {
       setHomeworks(homeworkEvents);
     }
     if (error) console.error("Hata olustu:", error);
-
-  }
+  };
 
   const handleExamRead = async () => {
     const {
@@ -90,7 +89,7 @@ export default function CalendarComponent() {
     }
     if (error) console.error("Hata olustu:", error);
   };
- 
+
   const handleCourseRead = async () => {
     const {
       data: { user },
@@ -106,8 +105,8 @@ export default function CalendarComponent() {
         title: course.title,
         subject: course.subject,
         topic: course.topic,
-        startTime: course.start_hour?.slice(0,5) ?? null,
-        endTime: course.end_hour?.slice(0,5)?? null,
+        startTime: course.start_hour?.slice(0, 5) ?? null,
+        endTime: course.end_hour?.slice(0, 5) ?? null,
         type: "course" as const,
       }));
       setCourses(courseEvents);
@@ -182,19 +181,19 @@ export default function CalendarComponent() {
                     event.type === "exam"
                       ? "bg-red-100 text-red-700"
                       : event.type === "course"
-                      ? "bg-purple-100 text-purple-700"
-                      : "bg-green-100 text-green-700"
+                        ? "bg-purple-100 text-purple-700"
+                        : "bg-green-100 text-green-700"
                   }`}
                 >
                   {event.type === "exam"
                     ? "Sınav"
                     : event.type === "course"
-                    ? "Ders"
-                    : "Ödev"}
+                      ? "Ders"
+                      : "Ödev"}
                 </span>
                 <div className="ml-2">
                   <p className="text-sm font-semibold text-gray-800">
-                    {event.type === 'exam' ? event.subject : event.title}
+                    {event.type === "exam" ? event.subject : event.title}
                   </p>
                   <p className="text-xs text-gray-500">{event.topic}</p>
                   {event.startTime && event.endTime && (

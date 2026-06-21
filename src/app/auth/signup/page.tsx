@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,8 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Loader2, MailCheck, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 export default function SignUp() {
+  // Code Resending
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -26,10 +29,11 @@ export default function SignUp() {
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/auth/confirm`,
         data: {
           full_name: fullName,
           role: role,
@@ -39,13 +43,38 @@ export default function SignUp() {
     });
 
     if (error) {
-      console.error("Signup error:", error);
-      console.error("Signup error m:", error.message);
+      if(error.message)
       setError(error.message);
       return;
     }
-    router.push("/login");
+    if (data.user && !data.session) {
+      router.push(`/auth/confirm-email?email=${email}`);
+      console.log("Mail kutunuzu kontrol ediniz");
+      return;
+    }
   }
+  async function isEmailVerified(): Promise<boolean> {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) return false;
+    return user.email_confirmed_at !== null;
+  }
+  const [verified, setVerified] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    isEmailVerified().then((v) => {
+      if (!mounted) return;
+      setVerified(v);
+      if (!v) console.log("Lütfen mailinizi dogrulayiniz.");
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white p-8 rounded-xl shadow w-full max-w-sm">
@@ -103,7 +132,7 @@ export default function SignUp() {
         </form>
         <p className="text-center text-sm mt-4 text-gray-500">
           Already have an account?{" "}
-          <a href="/login" className="text-purple-600 hover:underline">
+          <a href="/auth/login" className="text-purple-600 hover:underline">
             Log in
           </a>
         </p>

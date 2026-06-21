@@ -7,34 +7,48 @@ const anthropic = new Anthropic({
 });
 
 export async function POST(request: NextRequest) {
-  const { question, student_id } = await request.json();
+  const { question, student_id, role } = await request.json();
   console.log("student_id:", student_id);
+  console.log("student_id:", role);
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || "",
     process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   );
 
-  console.log(
-    "service key:",
-    process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 20),
-  );
-
-  const { data: exams, error: examsError } = await supabase
+   let examsQuery = supabase
     .from("exams")
-    .select("*")
-    .eq("student_id", student_id)
+    .select("*, profiles!exams_student_id_fkey(full_name)")
     .order("created_at", { ascending: false });
 
-  console.log("exams error;", examsError);
+  // Sadece öğrenci kendi verisini görür
+  if (role === "student") {
+    examsQuery = examsQuery.eq("student_id", student_id);
+  }
 
-  const studentName = exams?.[0]?.profiles?.full_name ?? "Ögrenci";
+  
 
-  console.log("exams data:", exams);
+  const { data: exams, error: examsError } = await examsQuery;
+  
+  
+  if(examsError){
+    console.log("exams error;", examsError);
+    return NextResponse.json({ error: "Veri çekilemedi." }, { status: 500 });
+
+  }
+  
+
+  const studentName = 
+       role==="student"
+       ?(exams?.[0]?.profiles as {full_name?:string})?.full_name?? "Ögrenci"
+       :"Dershane";
+  
+
 
   const examsSummary = exams
     ?.map(
       (exam) => `
+-${role!=="student"? `Ögrenci:${(exam.profiles as { full_name?: string })?.full_name}` : ""}      
 - Ders: ${exam.subject}
 - Konu: ${exam.topic}
 - Kaynak: ${exam.grades_source}
@@ -45,7 +59,54 @@ export async function POST(request: NextRequest) {
     )
     ?.join("\n");
 
-  const prompt = `
+  const getSystemPrompt = (role: string) => {
+    if (role === "admin") {
+      return `Sen bir dershane yönetim asistanısın.Genel performans trendleri, sınıf ortalamaları ve öğretmen bazlı raporlar üzerine analiz yaparsın. Yöneticiye net, özet ve karar destekleyici bilgiler sun.`;
+    }
+    if (role === "teacher") {
+      return `Sen bir öğretmen asistanısın.Sadece kendi öğrencilerinin verilerini analiz edersin. Öğrencilerin güçlü/zayıf yönlerini tespit et, öğretmene sınıf yönetimi ve ders planlaması için öneriler sun.`;
+    }
+    return `Sen bir öğrenci asistanısın. Öğrenciye arkadaşça, motive edici ve anlaşılır bir dilde yanıt ver. Teknik terimlerden kaçın, somut çalışma önerileri sun.`;
+  };
+
+  const getUserPrompt = (
+    role: string,
+    examsSummary: string,
+    question: string,
+    studentName: string,
+  ) => {
+    if (role === "admin") {
+      return `
+      Dershane genelindeki sınav verileri:
+${examsSummary}
+
+Yöneticinin sorusu: ${question}
+
+Cevap formatı:
+## 📊 Genel Performans Özeti
+## ⚠️ Dikkat Gerektiren Alanlar
+## ✅ Başarılı Alanlar
+## 💡 Yönetim Önerileri
+    `;
+    }
+    if (role === "teacher") {
+      return `
+    Öğrencilerin sınav verileri:
+${examsSummary}
+
+Öğretmenin sorusu: ${question}
+
+Cevap formatı:
+## 📊 Sınıf Performans Özeti
+## ⚠️ Zayıf Kalan Konular
+## ✅ Güçlü Alanlar
+## 📚 Ders Planı Önerileri
+    
+    
+  
+      `;
+    }
+    return `
     Sen bir yapay zeka asistanısın. ${studentName} adli ögrencinin geçmiş sınav performansına dayanarak, ona en iyi şekilde yardımcı olmak için sorusunu analiz etmen gerekiyor. 
     İşte öğrencinin geçmiş sınav performansı:
     ${examsSummary}
@@ -71,14 +132,19 @@ export async function POST(request: NextRequest) {
     ## 📚 Çalışma Önerileri
     Her zayıf konu için 2-3 spesifik öneri
     
+    
+    
     `;
+  };
+
   const message = await anthropic.messages.create({
     model: "claude-haiku-4-5",
     max_tokens: 1024,
+    system: getSystemPrompt(role),
     messages: [
       {
         role: "user",
-        content: prompt,
+        content: getUserPrompt(role, examsSummary ?? "", question, studentName),
       },
     ],
   });

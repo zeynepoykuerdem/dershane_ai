@@ -2,9 +2,9 @@
 
 import { useRef, useState } from "react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
@@ -26,8 +26,6 @@ export default function AIAgent() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-
-
   const sendMessage = async () => {
     if (input.trim() === "") return;
 
@@ -47,6 +45,12 @@ export default function AIAgent() {
       setLoading(false);
       return;
     }
+    //profile cek
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user?.id)
+      .single();
 
     try {
       const response = await fetch("/api/analyze", {
@@ -54,7 +58,11 @@ export default function AIAgent() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question: input, student_id: user?.id }),
+        body: JSON.stringify({
+          question: input,
+          student_id: user?.id,
+          role: profile?.role ?? "student",
+        }),
       });
       const data = await response.json();
       const assistantMessage: Message = {
@@ -73,7 +81,6 @@ export default function AIAgent() {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="w-full md:col-span-1 bg-white rounded-xl border p-4 flex flex-col h-[600px] sm:h-full">

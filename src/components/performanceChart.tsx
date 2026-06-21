@@ -1,7 +1,7 @@
 "use client";
 import CalendarComponent from "./ui/calendar_update";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 
 type ChartItem = {
   subject: string;
@@ -12,15 +12,12 @@ type ChartItem = {
 export default function PerformanceChart({
   showCalendar,
   studentId,
-  
 }: {
   showCalendar: boolean;
   studentId?: string;
-  
 }) {
   const [examData, setExamData] = useState<any[]>([]);
   const [chartData, setChartData] = useState<ChartItem[]>([]);
-  
 
   useEffect(() => {
     if (studentId) fetchExams();

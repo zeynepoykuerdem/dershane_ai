@@ -15,13 +15,13 @@ export default function Home() {
           </a>
           <div className="flex items-center gap-1">
             <a
-              href="/login"
+              href="/auth/login"
               className="text-gray-600 hover:text-purple-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               Giriş Yap
             </a>
             <a
-              href="/signup"
+              href="/auth/signup"
               className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               Kayıt Ol
@@ -49,12 +49,12 @@ export default function Home() {
             analizi — hepsi tek yerde.
           </p>
           <div className="flex gap-3 justify-center flex-wrap">
-            <Link href="/signup">
+            <Link href="/auth/signup">
               <Button className="bg-purple-600 hover:bg-purple-700 text-white px-7 py-3 text-sm font-medium rounded-xl shadow-md shadow-purple-200 transition-all hover:shadow-lg hover:shadow-purple-300">
                 Hemen Başla
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button
                 variant="outline"
                 className="border-gray-200 text-gray-700 hover:border-purple-300 hover:text-purple-700 px-7 py-3 text-sm font-medium rounded-xl transition-all"
@@ -130,7 +130,7 @@ export default function Home() {
             <p className="text-purple-100 text-base md:text-lg mb-8">
               Ücretsiz başlayın, istediğiniz zaman yükseltin.
             </p>
-            <Link href="/signup">
+            <Link href="/auth/signup">
               <Button className="bg-white  text-purple-700 hover:bg-purple-50 px-8 py-3 text-sm font-semibold rounded-xl shadow-md transition-all">
                 Hemen Basla
               </Button>

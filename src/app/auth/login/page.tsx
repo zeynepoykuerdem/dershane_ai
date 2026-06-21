@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,18 +41,18 @@ export default function Login() {
       <div className="bg-white p-8 rounded-xl shadow w-full max-w-sm">
         <h1 className="ttext-2xl font-bold mb-6 text-center">Login</h1>
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
-           <Input
+          <Input
             type="email"
             placeholder="Email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-purple-400"
           />
           <Input
             type="password"
             placeholder="Password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-purple-400"
           />
           {error && (
