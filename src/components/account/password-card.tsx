@@ -118,7 +118,7 @@ export default function PasswordCard() {
               <div className="relative">
                 <Input
                   id="next"
-                  type={showNewPassword ? "text" : "password"}
+                  type={showNewPassword ? "password" : "text"}
                   value={PasswordData.newPassword}
                   onChange={(e) =>
                     setPasswordData({
@@ -144,7 +144,7 @@ export default function PasswordCard() {
               <div className="relative">
                 <Input
                   id="confirm"
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={showConfirmPassword ? "password" : "text"}
                   value={PasswordData.confirmPassword}
                   onChange={(e) =>
                     setPasswordData({
